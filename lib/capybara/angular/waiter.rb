@@ -43,8 +43,8 @@ module Capybara
           
           var roots = ['ng-app', 'data-ng-app', 'x-ng-app'];
           var injector = (roots
-            .map(function(e) { angular.element(e).injector(); })
-            .filter(angular.isFunction))[0]
+            .map(function(e) { return angular.element('*['+ e + ']').injector(); })
+            .filter(function(e) { return angular.isDefined(e) && angular.isFunction(e.invoke); }))[0]
 
           if (!injector)
             throw new Error("Can't find any Angular Root ! I've looked for: " + roots);
