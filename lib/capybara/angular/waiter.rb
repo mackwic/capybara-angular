@@ -40,8 +40,14 @@ module Capybara
       def setup_ready
         page.execute_script <<-JS
           window.angularReady = false;
-          var app = $('*[ng-app]');
-          var injector = app.injector();
+          
+          var roots = ['ng-app', 'data-ng-app', 'x-ng-app'];
+          var injector = (roots
+            .map(function(e) { angular.element(e).injector(); })
+            .filter(angular.isFunction))[0]
+
+          if (!injector)
+            throw new Error("Can't find any Angular Root ! I've looked for: " + roots);
 
           injector.invoke(function($browser) {
             $browser.notifyWhenNoOutstandingRequests(function() {
